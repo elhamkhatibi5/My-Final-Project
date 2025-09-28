@@ -1,0 +1,42 @@
+{
+  "schema": "pocket-classroom/v1",
+  "capsule": {
+    "title": "Sample: Persian Basics",
+    "subject": "Language",
+    "level": "Beginner",
+    "description": "Sample capsule with notes, flashcards and a short quiz.",
+    "notes": [
+      "Alphabet: Alef to Yeh",
+      "Common greeting: Salam",
+      "Polite phrase: Merci"
+    ],
+    "flashcards": [
+      {
+        "front": "\u0633\u0644\u0627\u0645",
+        "back": "Hello"
+      },
+      {
+        "front": "\u062e\u062f\u0627\u062d\u0627\u0641\u0638",
+        "back": "Goodbye"
+      },
+      {
+        "front": "\u0645\u0631\u0633\u06cc",
+        "back": "Thank you"
+      }
+    ],
+    "quiz": [
+      {
+        "q": "What is 'Hello' in Persian?",
+        "choices": [
+          "Salam",
+          "Merci",
+          "Khodahafez",
+          "Bale"
+        ],
+        "correct": 0,
+        "explanation": ""
+      }
+    ],
+    "updatedAt": "2025-09-28T00:00:00Z"
+  }
+}
