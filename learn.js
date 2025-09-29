@@ -1,171 +1,82 @@
-import {storage} from './storage.js';
-import {renderLibrary} from './library.js';
-const $ = s => document.querySelector(s);
+// learn.js - Learn mode
+import { loadCapsule } from "./storage.js";
+import { escapeHTML } from "./utils.js";
 
-let activeId = null;
-let fcIndex = 0;
-let fcFlipped = false;
-let knownSet = new Set();
+export function renderLearn(app, id) {
+  const capsule = loadCapsule(id);
+  if (!capsule) { app.innerHTML = `<div class="alert alert-danger">Capsule not found</div>`; return; }
 
-export function bindLearn(){
-  // selectors
-  window.addEventListener('learnCapsule', (e)=> {
-    openLearn(e.detail.id);
-  });
+  app.innerHTML = `
+    <h3>Learn: ${escapeHTML(capsule.meta.title)}</h3>
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" data-bs-target="#notesTab">Notes</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" data-bs-target="#flashTab">Flashcards</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" data-bs-target="#quizTab">Quiz</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="notesTab"></div>
+      <div class="tab-pane fade" id="flashTab"></div>
+      <div class="tab-pane fade" id="quizTab"></div>
+    </div>
+  `;
 
-  // fill selector
-  refreshSelector();
-  $('#capsuleSelector').addEventListener('change', (e)=> openLearn(e.target.value));
+  // Notes
+  const notesDiv = app.querySelector("#notesTab");
+  notesDiv.innerHTML = "<ul class='list-group mb-3'>" + capsule.notes.map(n=>`<li class='list-group-item'>${escapeHTML(n)}</li>`).join("") + "</ul>";
 
-  // tabs
-  document.getElementById('learnTabs').addEventListener('click', (e)=>{
-    const btn = e.target.closest('button'); if(!btn) return;
-    document.querySelectorAll('#learnTabs .nav-link').forEach(n=>n.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.dataset.tab;
-    document.querySelectorAll('.learn-panel').forEach(p=>p.classList.add('d-none'));
-    if (tab==='notes') document.getElementById('notesPanel').classList.remove('d-none');
-    if (tab==='flashcards') document.getElementById('flashcardsPanel').classList.remove('d-none');
-    if (tab==='quiz') document.getElementById('quizPanel').classList.remove('d-none');
-  });
-
-  // notes search
-  $('#notesSearch').addEventListener('input', (e)=> renderNotes(e.target.value));
-
-  // export
-  $('#exportBtn').addEventListener('click', ()=>{
-    if (!activeId) return alert('Select a capsule');
-    const j = storage.exportCapsule(activeId);
-    const blob = new Blob([JSON.stringify(j,null,2)],{type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download = storage.get(activeId).title + '.json'; document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  });
-
-  // flashcard controls
-  $('#prevCard').addEventListener('click', ()=> {
-    if (!activeId) return;
-    fcIndex = Math.max(0, fcIndex-1); fcFlipped=false; renderFlashcard();
-  });
-  $('#nextCard').addEventListener('click', ()=> {
-    if (!activeId) return;
-    const capsule = storage.get(activeId);
-    fcIndex = Math.min((capsule.flashcards||[]).length-1, fcIndex+1); fcFlipped=false; renderFlashcard();
-  });
-  $('#flipCard').addEventListener('click', ()=> { fcFlipped = !fcFlipped; renderFlashcard(); });
-  $('#markKnown').addEventListener('click', ()=> { markKnown(true); });
-  $('#markUnknown').addEventListener('click', ()=> { markKnown(false); });
-
-  // keyboard shortcut: space flips
-  document.addEventListener('keydown', (e)=> {
-    if (e.code === 'Space' && document.querySelector('#flashcardsPanel').offsetParent !== null){
-      e.preventDefault();
-      fcFlipped = !fcFlipped; renderFlashcard();
-    }
-  });
-}
-
-function refreshSelector(){
-  const sel = $('#capsuleSelector'); sel.innerHTML = '';
-  const idx = storage.list();
-  idx.forEach(i=> {
-    const o = document.createElement('option'); o.value = i.id; o.textContent = i.title; sel.appendChild(o);
-  });
-  if (idx.length) { sel.value = idx[0].id; openLearn(idx[0].id); }
-}
-
-function openLearn(id){
-  activeId = id;
-  if (!id) return;
-  const cap = storage.get(id);
-  if (!cap) return alert('Capsule not found');
-  $('#learnTitle').textContent = cap.title;
-  renderNotes();
-  // flashcards
-  fcIndex = 0; fcFlipped = false;
-  const prog = storage.getProgress(id) || {};
-  knownSet = new Set(prog.knownFlashcards||[]);
-  renderFlashcard();
-  // quiz
-  renderQuiz();
-  // ensure view
-  document.getElementById('libraryView').classList.add('d-none');
-  document.getElementById('learnView').classList.remove('d-none');
-}
-
-function renderNotes(filter=''){
-  const el = $('#notesRender'); el.innerHTML='';
-  const cap = storage.get(activeId);
-  if (!cap) return;
-  const notes = (cap.notes||[]).filter(n=> n.toLowerCase().includes((filter||'').toLowerCase()));
-  if (!notes.length) el.innerHTML = '<div class="text-muted">No notes</div>';
-  notes.forEach(n=>{
-    const item = document.createElement('div'); item.className='list-group-item'; item.textContent = n;
-    el.appendChild(item);
-  });
-}
-
-function renderFlashcard(){
-  const box = document.getElementById('flashcardBox'); box.innerHTML='';
-  const cap = storage.get(activeId);
-  if (!cap) return;
-  const cards = cap.flashcards||[];
-  if (!cards.length){ box.innerHTML = '<div class="text-muted">No flashcards</div>'; document.getElementById('fcCounters').textContent=''; return; }
-  const c = cards[fcIndex];
-  const wrapper = document.createElement('div'); wrapper.className='inner'+(fcFlipped? ' flipped':'');
-  wrapper.style.position='relative';
-  // front
-  const front = document.createElement('div'); front.className='side front'; front.textContent = c.front;
-  const back = document.createElement('div'); back.className='side back'; back.textContent = c.back;
-  wrapper.appendChild(front); wrapper.appendChild(back);
-  box.appendChild(wrapper);
-  document.getElementById('fcCounters').textContent = \`\${fcIndex+1}/\${cards.length} • Known: \${knownSet.has(fcIndex)?'Yes':'No'}\`;
-}
-
-function markKnown(yes){
-  if (!activeId) return;
-  if (yes) knownSet.add(fcIndex); else knownSet.delete(fcIndex);
-  storage.saveProgress(activeId, { bestScore: storage.getProgress(activeId).bestScore || 0, knownFlashcards: Array.from(knownSet) });
-  renderFlashcard();
-}
-
-function renderQuiz(){
-  const area = $('#quizArea'); area.innerHTML='';
-  const cap = storage.get(activeId);
-  if (!cap) return;
-  const qs = cap.quiz||[];
-  if (!qs.length){ area.innerHTML='<div class="text-muted">No quiz questions</div>'; return; }
-
-  let index = 0;
-  let correct = 0;
-  function showQuestion(){
-    const q = qs[index];
-    area.innerHTML = '';
-    const qdiv = document.createElement('div');
-    qdiv.innerHTML = \`<h5>Q\${index+1}. \${escapeHtml(q.q)}</h5>\`;
-    q.choices.forEach((ch,i)=>{
-      const btn = document.createElement('button'); btn.className='btn btn-outline-light d-block w-100 text-start mb-2';
-      btn.textContent = ch || ('Choice '+(i+1));
-      btn.addEventListener('click', ()=>{
-        const correctIndex = Number(q.correct||0);
-        if (i===correctIndex){ correct++; btn.classList.remove('btn-outline-light'); btn.classList.add('btn-success'); } else { btn.classList.remove('btn-outline-light'); btn.classList.add('btn-danger'); }
-        setTimeout(()=>{
-          index++;
-          if (index<qs.length) showQuestion(); else finish();
-        }, 700);
-      });
-      qdiv.appendChild(btn);
-    });
-    area.appendChild(qdiv);
+  // Flashcards
+  let fIndex = 0;
+  const flashDiv = app.querySelector("#flashTab");
+  function renderFlash() {
+    if (capsule.flashcards.length===0) { flashDiv.innerHTML="<div class='alert alert-info'>No flashcards</div>"; return; }
+    const fc = capsule.flashcards[fIndex];
+    flashDiv.innerHTML = `
+      <div class="flashcard mb-3" id="flash">
+        <div class="flashcard-inner">
+          <div class="flashcard-front">${escapeHTML(fc.front)}</div>
+          <div class="flashcard-back">${escapeHTML(fc.back)}</div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-sm btn-secondary" id="prevBtn">Prev</button>
+        <button class="btn btn-sm btn-secondary" id="nextBtn">Next</button>
+      </div>
+    `;
+    const card = flashDiv.querySelector("#flash");
+    card.onclick = ()=> card.classList.toggle("flip");
+    flashDiv.querySelector("#prevBtn").onclick = ()=>{fIndex=(fIndex-1+capsule.flashcards.length)%capsule.flashcards.length; renderFlash();};
+    flashDiv.querySelector("#nextBtn").onclick = ()=>{fIndex=(fIndex+1)%capsule.flashcards.length; renderFlash();};
   }
-  function finish(){
-    const pct = Math.round((correct/qs.length)*100);
-    const prev = storage.getProgress(activeId).bestScore || 0;
-    if (pct > prev) storage.saveProgress(activeId, { bestScore: pct, knownFlashcards: Array.from(knownSet) });
-    $('#quizResult').style.display='block';
-    $('#quizResult').innerHTML = \`<div class="alert alert-info">Score: \${pct}% (best: \${Math.max(prev,pct)}%)</div>\`;
-  }
-  showQuestion();
-}
+  renderFlash();
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+  // Quiz
+  const quizDiv = app.querySelector("#quizTab");
+  if (capsule.quiz.length===0) {
+    quizDiv.innerHTML="<div class='alert alert-info'>No quiz</div>";
+  } else {
+    let qIndex=0, score=0;
+    function renderQ() {
+      const q = capsule.quiz[qIndex];
+      quizDiv.innerHTML = `
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>${escapeHTML(q.q)}</h5>
+            ${q.choices.map((c,i)=>`<button class="btn btn-outline-primary d-block w-100 my-1" data-i="${i}">${escapeHTML(c)}</button>`).join("")}
+          </div>
+        </div>
+        <div>Question ${qIndex+1} of ${capsule.quiz.length}</div>
+      `;
+      quizDiv.querySelectorAll("button").forEach(btn=>{
+        btn.onclick=()=>{
+          if(parseInt(btn.dataset.i)===q.answer) {score++;btn.classList.add("btn-success");}
+          else btn.classList.add("btn-danger");
+          setTimeout(()=>{
+            qIndex++;
+            if(qIndex<cap
+
+---
+
+### 📄 js/main.js
+(قبلاً برات فرستادم، بذار همینجا دوباره بذارم برای کامل بودن 👇)
+```javascript
+// main.js -
