@@ -1,32 +1,11 @@
+.app-section {
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-}
-.view-section {
-  display: none;
-}
-.view-section.active {
-  display: block;
-}
-.card:hover {
-  transform: scale(1.02);
-  transition: 0.2s;
-}
-.flashcard {
-  perspective: 1000px;
-}
-.flashcard-inner {
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-.flashcard.flip .flashcard-inner {
-  transform: rotateY(180deg);
-}
-.flashcard-front, .flashcard-back {
-  position: absolute;
-  width: 100%;
-  backface-visibility: hidden;
-}
-.flashcard-back {
-  transform: rotateY(180deg);
+#learn-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
 }
