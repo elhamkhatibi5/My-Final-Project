@@ -23,19 +23,37 @@
 
   <!-- Main Content -->
   <main class="container mt-4">
+
+    <!-- Library -->
     <section id="library-section" class="app-section">
       <h2>Library</h2>
-      <p>اینجا همه‌ی یادداشت‌ها و فلش‌کارت‌ها نمایش داده می‌شوند.</p>
+      <ul id="library-list" class="list-group"></ul>
     </section>
 
+    <!-- Author -->
     <section id="author-section" class="app-section d-none">
       <h2>Author</h2>
-      <p>اینجا می‌توانید یادداشت‌ها، فلش‌کارت یا آزمون جدید بسازید.</p>
+      <form id="author-form">
+        <div class="mb-3">
+          <label class="form-label">عنوان</label>
+          <input type="text" class="form-control" id="note-title">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">محتوا</label>
+          <textarea class="form-control" id="note-content"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">ذخیره</button>
+      </form>
     </section>
 
+    <!-- Learn -->
     <section id="learn-section" class="app-section d-none">
       <h2>Learn</h2>
-      <p>اینجا می‌توانید فلش‌کارت‌ها و آزمون‌ها را مرور و مطالعه کنید.</p>
+      <div id="learn-card" class="card p-3">
+        <h5 id="learn-title"></h5>
+        <p id="learn-content"></p>
+        <button id="next-btn" class="btn btn-success mt-2">بعدی</button>
+      </div>
     </section>
 
     <input type="file" id="importInput" accept=".json" style="display:none">
