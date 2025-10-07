@@ -1,38 +1,49 @@
-{
-  "schema": "pocket-classroom/v1",
-  "capsule": {
-    "id": "c1696600000000",
-    "title": "Sample Biology Capsule",
-    "subject": "Biology",
-    "level": "Beginner",
-    "description": "A sample capsule for learning basic biology concepts.",
-    "notes": [
-      "Cells are the basic unit of life.",
-      "DNA carries genetic information.",
-      "Photosynthesis converts sunlight into energy."
+[
+  {
+    "id": "n1a2b3c",
+    "title": "Biology — Photosynthesis",
+    "type": "note",
+    "tags": ["Biology", "Plants"],
+    "content": "Photosynthesis is the process by which plants convert light energy into chemical energy. It occurs in the chloroplasts and involves the light-dependent and light-independent reactions.",
+    "data": [],
+    "createdAt": 1690000000000,
+    "updatedAt": 1690000000000
+  },
+  {
+    "id": "f4d5e6g",
+    "title": "Basic Spanish — Vocabulary",
+    "type": "flashcards",
+    "tags": ["Spanish", "Vocab"],
+    "content": "",
+    "data": [
+      {"id": "fc1", "front": "Hello", "back": "Hola"},
+      {"id": "fc2", "front": "Thank you", "back": "Gracias"},
+      {"id": "fc3", "front": "Please", "back": "Por favor"}
     ],
-    "flashcards": [
-      { "front": "What is the powerhouse of the cell?", "back": "Mitochondria" },
-      { "front": "Which molecule carries genetic information?", "back": "DNA" },
-      { "front": "What process converts sunlight into chemical energy?", "back": "Photosynthesis" }
-    ],
-    "quiz": [
+    "createdAt": 1690001000000,
+    "updatedAt": 1690001000000
+  },
+  {
+    "id": "q7h8i9j",
+    "title": "JS Quiz — Basics",
+    "type": "quiz",
+    "tags": ["JS", "Quiz"],
+    "content": "",
+    "data": [
       {
-        "question": "Which organelle is responsible for energy production?",
-        "choices": ["Nucleus", "Mitochondria", "Ribosome", "Golgi Apparatus"],
-        "correctIndex": 1
+        "id": "q1",
+        "text": "Which keyword declares a block-scoped variable?",
+        "opts": ["var", "let", "function", "const"],
+        "correct": 2
       },
       {
-        "question": "DNA stands for?",
-        "choices": ["Deoxyribonucleic Acid", "Dynamic Nucleic Acid", "Deoxynuclear Acid", "Double Nitrogen Acid"],
-        "correctIndex": 0
-      },
-      {
-        "question": "Photosynthesis occurs in which part of the plant cell?",
-        "choices": ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
-        "correctIndex": 2
+        "id": "q2",
+        "text": "Which method converts a JSON string to an object?",
+        "opts": ["JSON.parse", "JSON.stringify", "Object.fromJSON", "parseJSON"],
+        "correct": 1
       }
     ],
-    "updatedAt": "2025-10-07T07:00:00.000Z"
+    "createdAt": 1690001800000,
+    "updatedAt": 1690001900000
   }
-}
+]
