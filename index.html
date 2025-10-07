@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,78 +7,89 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-light">
+<body class="bg-dark text-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="#">🎓 Pocket Classroom</a>
-    <div class="navbar-nav">
+    <div class="navbar-nav ms-auto">
       <a class="nav-link active" href="#" data-section="library">Library</a>
-      <a class="nav-link" href="#" data-section="author">Author</a>
+      <a class="nav-link" href="#" data-section="author">Create</a>
       <a class="nav-link" href="#" data-section="learn">Learn</a>
     </div>
   </div>
 </nav>
 
-<main class="container mt-4">
+<!-- Main Content -->
+<main class="container py-4">
 
-  <!-- Library -->
+  <!-- Library Section -->
   <section id="library-section" class="app-section">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Library</h2>
+      <h2 class="fw-bold">Your Library</h2>
       <div>
         <select id="sort-select" class="form-select form-select-sm d-inline-block w-auto me-2">
-          <option value="date-desc">جدیدترین اول</option>
-          <option value="date-asc">قدیمی‌ترین اول</option>
-          <option value="title-asc">عنوان صعودی</option>
-          <option value="title-desc">عنوان نزولی</option>
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="title-asc">Title (A–Z)</option>
+          <option value="title-desc">Title (Z–A)</option>
         </select>
         <button id="export-btn" class="btn btn-success btn-sm me-2">Export JSON</button>
         <button id="import-btn" class="btn btn-secondary btn-sm">Import JSON</button>
         <input type="file" id="importInput" accept=".json" style="display:none">
       </div>
     </div>
+
     <div class="mb-3">
-      <input type="text" id="search-input" class="form-control" placeholder="جستجو...">
+      <input type="text" id="search-input" class="form-control" placeholder="Search your notes...">
     </div>
+
     <div id="library-list" class="row g-3"></div>
   </section>
 
-  <!-- Author -->
+  <!-- Author Section -->
   <section id="author-section" class="app-section d-none">
-    <h2>Author</h2>
-    <form id="author-form">
+    <h2 class="fw-bold mb-3">Create New Capsule</h2>
+    <form id="author-form" class="card p-4 bg-secondary bg-opacity-25 rounded-4 shadow-sm">
       <input type="hidden" id="edit-index">
       <div class="mb-3">
-        <label class="form-label">عنوان</label>
-        <input type="text" class="form-control" id="note-title" required>
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" id="note-title" placeholder="Enter lesson title..." required>
       </div>
       <div class="mb-3">
-        <label class="form-label">محتوا</label>
-        <textarea class="form-control" id="note-content" required></textarea>
+        <label class="form-label">Content</label>
+        <textarea class="form-control" id="note-content" rows="4" placeholder="Write your notes, flashcard content, or quiz here..." required></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label">برچسب‌ها (با کاما جدا کنید)</label>
-        <input type="text" class="form-control" id="note-tags">
+        <label class="form-label">Tags (comma-separated)</label>
+        <input type="text" class="form-control" id="note-tags" placeholder="e.g., Math, Biology, Vocabulary">
       </div>
-      <button type="submit" class="btn btn-primary">ذخیره</button>
+      <button type="submit" class="btn btn-primary w-100 fw-bold">Save Capsule</button>
     </form>
   </section>
 
-  <!-- Learn -->
+  <!-- Learn Section -->
   <section id="learn-section" class="app-section d-none">
-    <h2>Learn</h2>
-    <div id="learn-card" class="card p-3">
-      <h5 id="learn-title"></h5>
-      <p id="learn-content"></p>
-      <p id="learn-tags" class="text-muted"></p>
-      <p id="learn-date" class="text-muted"></p>
-      <button id="learn-next-btn" class="btn btn-success mt-2">بعدی</button>
-      <button id="learn-done-btn" class="btn btn-secondary mt-2 ms-2">آموخته شد</button>
+    <h2 class="fw-bold mb-3">Study Mode</h2>
+    <div id="learn-card" class="card bg-dark-subtle text-light p-4 rounded-4 shadow-sm">
+      <h5 id="learn-title" class="fw-bold mb-2"></h5>
+      <p id="learn-content" class="mb-3"></p>
+      <p id="learn-tags" class="text-info small mb-1"></p>
+      <p id="learn-date" class="text-muted small mb-3"></p>
+      <div>
+        <button id="learn-next-btn" class="btn btn-success me-2">Next</button>
+        <button id="learn-done-btn" class="btn btn-outline-light">Mark as Learned</button>
+      </div>
     </div>
   </section>
 
 </main>
+
+<!-- Footer -->
+<footer class="text-center py-3 text-muted small border-top border-secondary mt-5">
+  © 2025 Pocket Classroom — Learn Anywhere, Anytime
+</footer>
 
 <script type="module" src="main.js"></script>
 </body>
