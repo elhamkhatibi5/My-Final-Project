@@ -1,81 +1,176 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pocket Classroom</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pocket Classroom — Pro Edition</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="css/style.css" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
-<body class="bg-dark text-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
-<div class="container-fluid">
-<a class="navbar-brand" href="#">Pocket Classroom</a>
-<div class="collapse navbar-collapse">
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item"><a class="nav-link active" href="#" data-tab="library">Library</a></li>
-<li class="nav-item"><a class="nav-link" href="#" data-tab="author">Author</a></li>
-<li class="nav-item"><a class="nav-link" href="#" data-tab="learn">Learn</a></li>
-</ul>
-</div>
-</div>
-</nav>
+<body class="theme-dark">
+
+<header class="navbar sticky-top navbar-dark bg-navbar shadow-sm">
+  <div class="container-fluid d-flex align-items-center gap-3">
+    <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+      <img src="assets/logo.svg" alt="PC" class="logo-img" width="46" height="46">
+      <div class="d-none d-md-block">
+        <div class="h5 mb-0">Pocket Classroom</div>
+        <small class="text-muted">Pro — Offline learning capsules</small>
+      </div>
+    </a>
+
+    <div class="ms-auto d-flex gap-2 align-items-center">
+      <div class="btn-group me-2" role="group">
+        <button id="nav-library" class="btn btn-sm btn-ghost active"><i class="bi bi-journal-bookmark"></i> Library</button>
+        <button id="nav-author" class="btn btn-sm btn-ghost"><i class="bi bi-pencil-square"></i> Author</button>
+        <button id="nav-learn" class="btn btn-sm btn-ghost"><i class="bi bi-mortarboard"></i> Learn</button>
+      </div>
+      <button id="theme-toggle" class="btn btn-sm btn-outline-light" title="Toggle theme"><i class="bi bi-moon-stars"></i></button>
+    </div>
+  </div>
+</header>
+
 <main class="container py-4">
-<section id="library-section" class="tab-section">
-<div class="d-flex justify-content-between align-items-center mb-3">
-<h2>Library</h2>
-<div>
-<button id="new-capsule-btn" class="btn btn-success me-2">New Capsule</button>
-<input type="file" id="import-json" class="form-control d-inline-block w-auto">
-</div>
-</div>
-<div id="library-grid" class="row g-3"></div>
-</section>
-<section id="author-section" class="tab-section d-none">
-<h2>Author Capsule</h2>
-<form id="author-form" class="mb-3">
-<div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-control" id="capsule-title" required></div>
-<div class="mb-3"><label class="form-label">Subject</label><input type="text" class="form-control" id="capsule-subject"></div>
-<div class="mb-3"><label class="form-label">Level</label>
-<select class="form-select" id="capsule-level">
-<option value="Beginner">Beginner</option>
-<option value="Intermediate">Intermediate</option>
-<option value="Advanced">Advanced</option>
-</select>
-</div>
-<div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" id="capsule-description" rows="2"></textarea></div>
-<div class="mb-3"><label class="form-label">Notes (one per line)</label><textarea class="form-control" id="capsule-notes" rows="4"></textarea></div>
-<div class="mb-3">
-<label class="form-label">Flashcards</label>
-<div id="flashcards-container"></div>
-<button type="button" id="add-flashcard-btn" class="btn btn-sm btn-primary mt-2">Add Flashcard</button>
-</div>
-<div class="mb-3">
-<label class="form-label">Quiz</label>
-<div id="quiz-container"></div>
-<button type="button" id="add-quiz-btn" class="btn btn-sm btn-primary mt-2">Add Question</button>
-</div>
-<button type="submit" class="btn btn-success">Save Capsule</button>
-</form>
-</section>
-<section id="learn-section" class="tab-section d-none">
-<h2>Learn Mode</h2>
-<div class="mb-3">
-<select id="learn-capsule-select" class="form-select w-50"></select>
-</div>
-<ul class="nav nav-tabs mb-3" id="learn-tabs">
-<li class="nav-item"><a class="nav-link active" href="#" data-tab="notes-tab">Notes</a></li>
-<li class="nav-item"><a class="nav-link" href="#" data-tab="flashcards-tab">Flashcards</a></li>
-<li class="nav-item"><a class="nav-link" href="#" data-tab="quiz-tab">Quiz</a></li>
-</ul>
-<div id="learn-content">
-<div id="notes-tab" class="learn-tab"></div>
-<div id="flashcards-tab" class="learn-tab d-none"></div>
-<div id="quiz-tab" class="learn-tab d-none"></div>
-</div>
-</section>
+  <!-- LIBRARY -->
+  <section id="section-library" class="view">
+    <div class="d-flex align-items-center mb-3 gap-3">
+      <h2 class="me-auto">Library</h2>
+      <div class="d-flex gap-2 align-items-center">
+        <button id="btn-new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Capsule</button>
+        <label class="btn btn-outline-light mb-0">Import <input id="import-file" type="file" accept=".json" hidden></label>
+        <button id="export-all" class="btn btn-success"><i class="bi bi-download"></i> Export All</button>
+      </div>
+    </div>
+    <div id="capsule-grid" class="row g-3 card-grid"></div>
+    <div id="empty-library" class="text-center text-muted mt-5">No capsules — create your first capsule.</div>
+  </section>
+
+  <!-- AUTHOR -->
+  <section id="section-author" class="view d-none">
+    <div class="d-flex align-items-center mb-3">
+      <h2 id="author-heading" class="me-auto">Author</h2>
+      <div id="author-actions" class="d-flex gap-2"></div>
+    </div>
+
+    <div class="card bg-panel p-3 shadow-sm">
+      <form id="author-form" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Title *</label>
+          <input id="meta-title" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Subject</label>
+          <input id="meta-subject" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Level</label>
+          <select id="meta-level" class="form-select">
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea id="meta-desc" class="form-control" rows="2"></textarea>
+        </div>
+
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5>Notes <small class="text-muted">markdown-lite</small></h5>
+            <div class="small text-muted">One note per line</div>
+          </div>
+          <textarea id="notes-text" class="form-control" rows="4" placeholder="One note per line"></textarea>
+        </div>
+
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>Flashcards</h5>
+            <button id="add-flashcard" class="btn btn-sm btn-outline-light"><i class="bi bi-plus"></i> Add</button>
+          </div>
+          <div id="flashcards-rows" class="mt-2"></div>
+        </div>
+
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>Quiz</h5>
+            <button id="add-quiz" class="btn btn-sm btn-outline-light"><i class="bi bi-plus"></i> Add question</button>
+          </div>
+          <div id="quiz-rows" class="mt-2"></div>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+          <button id="save-capsule" class="btn btn-success"><i class="bi bi-save"></i> Save</button>
+          <button id="cancel-edit" type="button" class="btn btn-secondary">Cancel</button>
+          <div id="author-message" class="ms-auto text-success align-self-center"></div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- LEARN -->
+  <section id="section-learn" class="view d-none">
+    <div class="d-flex align-items-center mb-3">
+      <h2 id="learn-heading" class="me-auto">Learn</h2>
+      <select id="learn-select" class="form-select w-auto"></select>
+    </div>
+
+    <div class="card bg-panel p-3 shadow-sm">
+      <div class="d-flex justify-content-between mb-3">
+        <div class="btn-group">
+          <button id="tab-notes" class="btn btn-outline-light">Notes</button>
+          <button id="tab-flash" class="btn btn-outline-light">Flashcards</button>
+          <button id="tab-quiz" class="btn btn-outline-light">Quiz</button>
+        </div>
+        <div>
+          <button id="export-capsule" class="btn btn-sm btn-outline-success">Export</button>
+        </div>
+      </div>
+
+      <div id="learn-content">
+        <div id="notes-panel" class="learn-panel d-none">
+          <input id="notes-search" class="form-control mb-2" placeholder="Search notes...">
+          <ol id="notes-list" class="ps-3"></ol>
+        </div>
+
+        <div id="flash-panel" class="learn-panel d-none text-center">
+          <div id="flashcard" class="flashcard" tabindex="0" role="button" aria-label="Flashcard (Space flip)">
+            <div class="front"></div>
+            <div class="back d-none"></div>
+          </div>
+          <div class="mt-3 d-flex justify-content-center gap-2">
+            <button id="prev-card" class="btn btn-sm btn-outline-light">Prev</button>
+            <button id="known-card" class="btn btn-sm btn-success">Known</button>
+            <button id="unknown-card" class="btn btn-sm btn-danger">Unknown</button>
+            <button id="next-card" class="btn btn-sm btn-outline-light">Next</button>
+          </div>
+          <div id="flash-stats" class="mt-2 small text-muted"></div>
+        </div>
+
+        <div id="quiz-panel" class="learn-panel d-none">
+          <div id="quiz-question" class="fw-bold"></div>
+          <div id="quiz-choices" class="list-group my-2"></div>
+          <div class="d-flex">
+            <button id="quiz-next" class="btn btn-sm btn-outline-light ms-auto">Next</button>
+          </div>
+          <div id="quiz-score" class="mt-2 small text-muted"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script type="module" src="main.js"></script>
+
+<!-- flip sound and helpers -->
+<script type="module" src="js/flip-sound.js"></script>
+<script type="module" src="js/main.js"></script>
+
+<footer class="text-center text-muted py-3">Pocket Classroom — Pro Edition</footer>
 </body>
 </html>
