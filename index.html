@@ -1,64 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎓 Pocket Classroom</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 Pocket Classroom</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">🎓 Pocket Classroom</a>
-      <div class="navbar-nav">
-        <a class="nav-link active" href="#" data-section="library">Library</a>
-        <a class="nav-link" href="#" data-section="author">Author</a>
-        <a class="nav-link" href="#" data-section="learn">Learn</a>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">🎓 Pocket Classroom</a>
+    <div class="navbar-nav">
+      <a class="nav-link active" href="#" data-section="library">Library</a>
+      <a class="nav-link" href="#" data-section="author">Author</a>
+      <a class="nav-link" href="#" data-section="learn">Learn</a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- Main Content -->
-  <main class="container mt-4">
+<main class="container mt-4">
 
-    <!-- Library -->
-    <section id="library-section" class="app-section">
-      <h2>Library</h2>
-      <ul id="library-list" class="list-group"></ul>
-    </section>
-
-    <!-- Author -->
-    <section id="author-section" class="app-section d-none">
-      <h2>Author</h2>
-      <form id="author-form">
-        <div class="mb-3">
-          <label class="form-label">عنوان</label>
-          <input type="text" class="form-control" id="note-title">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">محتوا</label>
-          <textarea class="form-control" id="note-content"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">ذخیره</button>
-      </form>
-    </section>
-
-    <!-- Learn -->
-    <section id="learn-section" class="app-section d-none">
-      <h2>Learn</h2>
-      <div id="learn-card" class="card p-3">
-        <h5 id="learn-title"></h5>
-        <p id="learn-content"></p>
-        <button id="next-btn" class="btn btn-success mt-2">بعدی</button>
-      </div>
-    </section>
-
+  <!-- Library -->
+  <section id="library-section" class="app-section">
+    <h2>Library</h2>
+    <div class="mb-3">
+      <input type="text" id="search-input" class="form-control" placeholder="جستجو...">
+    </div>
+    <ul id="library-list" class="list-group mb-3"></ul>
+    <button id="export-btn" class="btn btn-success me-2">Export JSON</button>
+    <button id="import-btn" class="btn btn-secondary">Import JSON</button>
     <input type="file" id="importInput" accept=".json" style="display:none">
-  </main>
+  </section>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- Author -->
+  <section id="author-section" class="app-section d-none">
+    <h2>Author</h2>
+    <form id="author-form">
+      <div class="mb-3">
+        <label class="form-label">عنوان</label>
+        <input type="text" class="form-control" id="note-title">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">محتوا</label>
+        <textarea class="form-control" id="note-content"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">ذخیره</button>
+    </form>
+  </section>
+
+  <!-- Learn -->
+  <section id="learn-section" class="app-section d-none">
+    <h2>Learn</h2>
+    <div id="learn-card" class="card p-3">
+      <h5 id="learn-title"></h5>
+      <p id="learn-content"></p>
+      <button id="next-btn" class="btn btn-success mt-2">بعدی</button>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
