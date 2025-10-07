@@ -20,44 +20,71 @@ navLinks.forEach(link => {
 // Library & Author
 const form = document.getElementById('author-form');
 const libraryList = document.getElementById('library-list');
+const searchInput = document.getElementById('search-input');
+const exportBtn = document.getElementById('export-btn');
+const importBtn = document.getElementById('import-btn');
+const importInput = document.getElementById('importInput');
 
+let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+let currentIndex = 0;
+
+// Add note
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const title = document.getElementById('note-title').value.trim();
   const content = document.getElementById('note-content').value.trim();
   if (!title || !content) return;
-
-  const notes = JSON.parse(localStorage.getItem('notes') || '[]');
-  notes.push({ title, content });
-  localStorage.setItem('notes', JSON.stringify(notes));
-
-  addNoteToLibrary({ title, content });
+  const note = { title, content };
+  notes.push(note);
+  saveNotes();
+  addNoteToLibrary(note);
   form.reset();
+  showLearnCard();
 });
 
+// Render note in Library
 function addNoteToLibrary(note) {
   const li = document.createElement('li');
-  li.className = 'list-group-item';
-  li.textContent = `${note.title}: ${note.content}`;
+  li.className = 'list-group-item d-flex justify-content-between align-items-start';
+  li.innerHTML = `<span>${note.title}: ${note.content}</span>`;
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-sm btn-danger';
+  delBtn.textContent = 'حذف';
+  delBtn.addEventListener('click', () => {
+    notes = notes.filter(n => n !== note);
+    saveNotes();
+    libraryList.removeChild(li);
+    if (currentIndex >= notes.length) currentIndex = 0;
+    showLearnCard();
+  });
+  li.appendChild(delBtn);
   libraryList.appendChild(li);
 }
 
-// Load notes from LocalStorage
-window.addEventListener('DOMContentLoaded', () => {
-  const notes = JSON.parse(localStorage.getItem('notes') || '[]');
-  notes.forEach(addNoteToLibrary);
-  if (notes.length) currentIndex = 0;
+// Save to LocalStorage
+function saveNotes() {
+  localStorage.setItem('notes', JSON.stringify(notes));
+}
+
+// Render Library
+function renderLibrary(filteredNotes = notes) {
+  libraryList.innerHTML = '';
+  filteredNotes.forEach(addNoteToLibrary);
+}
+
+// Search functionality
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const filtered = notes.filter(n => n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query));
+  renderLibrary(filtered);
 });
 
-// Learn Section
+// Learn section
 const learnTitle = document.getElementById('learn-title');
 const learnContent = document.getElementById('learn-content');
 const nextBtn = document.getElementById('next-btn');
 
-let currentIndex = 0;
-
 function showLearnCard() {
-  const notes = JSON.parse(localStorage.getItem('notes') || '[]');
   if (!notes.length) {
     learnTitle.textContent = 'هیچ فلش کارتی موجود نیست';
     learnContent.textContent = '';
@@ -69,11 +96,55 @@ function showLearnCard() {
 }
 
 nextBtn.addEventListener('click', () => {
-  const notes = JSON.parse(localStorage.getItem('notes') || '[]');
   if (!notes.length) return;
   currentIndex = (currentIndex + 1) % notes.length;
   showLearnCard();
 });
 
-// Initial display for Learn section
-window.addEventListener('DOMContentLoaded', showLearnCard);
+// Export JSON
+exportBtn.addEventListener('click', () => {
+  const dataStr = JSON.stringify(notes, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pocket_classroom.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Import JSON
+importBtn.addEventListener('click', () => importInput.click());
+importInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (Array.isArray(imported)) {
+        notes = imported;
+        saveNotes();
+        renderLibrary();
+        currentIndex = 0;
+        showLearnCard();
+      }
+    } catch (err) {
+      alert('فایل JSON معتبر نیست');
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Initial load: add sample notes if empty
+if (!notes.length) {
+  notes = [
+    { title: 'فلش‌کارت ۱', content: 'محتوای نمونه ۱' },
+    { title: 'فلش‌کارت ۲', content: 'محتوای نمونه ۲' },
+    { title: 'فلش‌کارت ۳', content: 'محتوای نمونه ۳' }
+  ];
+  saveNotes();
+}
+
+renderLibrary();
+showLearnCard();
