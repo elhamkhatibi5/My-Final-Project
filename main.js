@@ -1,25 +1,27 @@
-import { renderLibrary } from './js/library.js';
-import { renderAuthor } from './js/author.js';
-import { renderLearn } from './js/learn.js';
-
-// Routing between views
+// دسترسی به بخش‌ها
 const sections = {
-  library: document.getElementById('librarySection'),
-  author: document.getElementById('authorSection'),
-  learn: document.getElementById('learnSection')
+  library: document.getElementById('library-section'),
+  author: document.getElementById('author-section'),
+  learn: document.getElementById('learn-section')
 };
 
-function showSection(name) {
-  Object.values(sections).forEach(sec => sec.classList.add('d-none'));
-  sections[name].classList.remove('d-none');
-  if (name === 'library') renderLibrary();
-  if (name === 'author') renderAuthor();
-  if (name === 'learn') renderLearn();
-}
+// دسترسی به لینک‌ها
+const navLinks = document.querySelectorAll('.nav-link');
 
-document.getElementById('navLibrary').addEventListener('click', () => showSection('library'));
-document.getElementById('navAuthor').addEventListener('click', () => showSection('author'));
-document.getElementById('navLearn').addEventListener('click', () => showSection('learn'));
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
 
-// Default
-showSection('library');
+    // حذف کلاس active از همه لینک‌ها
+    navLinks.forEach(l => l.classList.remove('active'));
+    // اضافه کردن active به لینک کلیک شده
+    link.classList.add('active');
+
+    // مخفی کردن همه بخش‌ها
+    Object.values(sections).forEach(sec => sec.classList.add('d-none'));
+
+    // نمایش بخش مربوطه
+    const sectionKey = link.getAttribute('data-section');
+    sections[sectionKey].classList.remove('d-none');
+  });
+});
