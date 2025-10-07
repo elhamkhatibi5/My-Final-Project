@@ -804,5 +804,109 @@ renderIoLog();
 document.querySelectorAll('.nav-btn').forEach(b=> b.addEventListener('click', ()=> { window._tmpFlashcards=[]; window._tmpQuiz=[]; }));
 
 </script>
+  function showQuizStudy(){
+  studyEmpty.style.display='none';
+  flashStudy.classList.add('d-none');
+  quizStudy.classList.remove('d-none');
+  renderQuizQuestion();
+}
+
+/* --- Render Flashcard --- */
+function renderStudyCard(){
+  const items = studyState.items;
+  const idx = studyState.index;
+  if(!items.length){ fcFrontDisplay.textContent='No cards.'; return; }
+  const card = items[idx];
+  fcMeta.textContent = `Card ${idx+1} of ${items.length}`;
+  fcFrontDisplay.textContent = card.front;
+  fcBackDisplay.textContent = card.back;
+  fcBackDisplay.style.display='none';
+  studyProgress.textContent = `${studyState.learned.size} / ${items.length}`;
+}
+
+/* --- Flashcard buttons --- */
+showAnswerBtn.addEventListener('click', ()=>{
+  fcBackDisplay.style.display='block';
+});
+markLearnedBtn.addEventListener('click', ()=>{
+  const current = studyState.items[studyState.index];
+  if(current) studyState.learned.add(current.id);
+  studyProgress.textContent = `${studyState.learned.size} / ${studyState.items.length}`;
+});
+nextCardBtn.addEventListener('click', ()=>{
+  if(studyState.items.length===0) return;
+  studyState.index = (studyState.index+1) % studyState.items.length;
+  renderStudyCard();
+});
+
+/* --- Render Quiz Question --- */
+function renderQuizQuestion(){
+  const items = studyState.items;
+  const idx = studyState.index;
+  if(!items.length){ qTextDisplay.textContent='No questions.'; return; }
+  const q = items[idx];
+  qTextDisplay.textContent = q.text;
+  qOptions.innerHTML = '';
+  qFeedback.textContent = '';
+  q.opts.forEach((opt, i)=>{
+    if(!opt) return;
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-outline-light btn-pill text-start';
+    btn.textContent = `${String.fromCharCode(65+i)}. ${opt}`;
+    btn.addEventListener('click', ()=>{
+      if(i+1 === q.correct){
+        qFeedback.textContent = '✅ Correct!';
+        qFeedback.style.color = '#22c55e';
+      }else{
+        qFeedback.textContent = `❌ Incorrect (Answer: ${String.fromCharCode(64+q.correct)})`;
+        qFeedback.style.color = '#f87171';
+      }
+    });
+    qOptions.appendChild(btn);
+  });
+  studyProgress.textContent = `${idx+1} / ${items.length}`;
+}
+
+/* --- Next question --- */
+qNextBtn.addEventListener('click', ()=>{
+  if(studyState.items.length===0) return;
+  studyState.index = (studyState.index+1) % studyState.items.length;
+  renderQuizQuestion();
+});
+
+/* --- Notes autosave --- */
+notesArea.value = app.notes;
+notesArea.addEventListener('input', ()=>{
+  app.notes = notesArea.value;
+  saveNotes();
+});
+
+/* --- Render I/O Log --- */
+function renderIoLog(){
+  ioLogEl.innerHTML = app.ioLog.map(x=>`<li>[${new Date(x.at).toLocaleTimeString()}] ${escapeHtml(x.text)}</li>`).join('');
+}
+clearLogs.addEventListener('click', ()=>{
+  app.ioLog = []; saveIoLog(); renderIoLog();
+});
+
+/* --- Section switching --- */
+function showSection(id){
+  for(const k in sections){ sections[k].classList.toggle('d-none', k!==id); }
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.section===id));
+}
+navBtns.forEach(btn=>btn.addEventListener('click', ()=>showSection(btn.dataset.section)));
+typeSelect.addEventListener('change', ()=>toggleTypeUI(typeSelect.value));
+cancelEditBtn.addEventListener('click', ()=>{ clearAuthorForm(); showSection('library'); });
+newCapsuleBtn.addEventListener('click', ()=>clearAuthorForm());
+capsuleForm.addEventListener('submit', saveCapsuleFromForm);
+
+/* --- Init --- */
+function init(){
+  loadState();
+  renderLibrary();
+  renderIoLog();
+  notesArea.value = app.notes;
+}
+init();
 </body>
   </html>
