@@ -24,20 +24,31 @@
 
   <!-- Library -->
   <section id="library-section" class="app-section">
-    <h2>Library</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2>Library</h2>
+      <div>
+        <select id="sort-select" class="form-select form-select-sm d-inline-block w-auto me-2">
+          <option value="date-desc">جدیدترین اول</option>
+          <option value="date-asc">قدیمی‌ترین اول</option>
+          <option value="title-asc">عنوان صعودی</option>
+          <option value="title-desc">عنوان نزولی</option>
+        </select>
+        <button id="export-btn" class="btn btn-success btn-sm me-2">Export JSON</button>
+        <button id="import-btn" class="btn btn-secondary btn-sm">Import JSON</button>
+        <input type="file" id="importInput" accept=".json" style="display:none">
+      </div>
+    </div>
     <div class="mb-3">
       <input type="text" id="search-input" class="form-control" placeholder="جستجو...">
     </div>
-    <div id="library-list" class="row g-3 mb-3"></div>
-    <button id="export-btn" class="btn btn-success me-2">Export JSON</button>
-    <button id="import-btn" class="btn btn-secondary">Import JSON</button>
-    <input type="file" id="importInput" accept=".json" style="display:none">
+    <div id="library-list" class="row g-3"></div>
   </section>
 
   <!-- Author -->
   <section id="author-section" class="app-section d-none">
     <h2>Author</h2>
     <form id="author-form">
+      <input type="hidden" id="edit-index">
       <div class="mb-3">
         <label class="form-label">عنوان</label>
         <input type="text" class="form-control" id="note-title" required>
@@ -47,7 +58,7 @@
         <textarea class="form-control" id="note-content" required></textarea>
       </div>
       <div class="mb-3">
-        <label class="form-label">برچسب‌ها (اختیاری، با کاما جدا کنید)</label>
+        <label class="form-label">برچسب‌ها (با کاما جدا کنید)</label>
         <input type="text" class="form-control" id="note-tags">
       </div>
       <button type="submit" class="btn btn-primary">ذخیره</button>
@@ -61,7 +72,9 @@
       <h5 id="learn-title"></h5>
       <p id="learn-content"></p>
       <p id="learn-tags" class="text-muted"></p>
-      <button id="next-btn" class="btn btn-success mt-2">بعدی</button>
+      <p id="learn-date" class="text-muted"></p>
+      <button id="learn-next-btn" class="btn btn-success mt-2">بعدی</button>
+      <button id="learn-done-btn" class="btn btn-secondary mt-2 ms-2">آموخته شد</button>
     </div>
   </section>
 
