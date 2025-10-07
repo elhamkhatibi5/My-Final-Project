@@ -28,7 +28,7 @@
     <div class="mb-3">
       <input type="text" id="search-input" class="form-control" placeholder="جستجو...">
     </div>
-    <ul id="library-list" class="list-group mb-3"></ul>
+    <div id="library-list" class="row g-3 mb-3"></div>
     <button id="export-btn" class="btn btn-success me-2">Export JSON</button>
     <button id="import-btn" class="btn btn-secondary">Import JSON</button>
     <input type="file" id="importInput" accept=".json" style="display:none">
@@ -40,11 +40,15 @@
     <form id="author-form">
       <div class="mb-3">
         <label class="form-label">عنوان</label>
-        <input type="text" class="form-control" id="note-title">
+        <input type="text" class="form-control" id="note-title" required>
       </div>
       <div class="mb-3">
         <label class="form-label">محتوا</label>
-        <textarea class="form-control" id="note-content"></textarea>
+        <textarea class="form-control" id="note-content" required></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">برچسب‌ها (اختیاری، با کاما جدا کنید)</label>
+        <input type="text" class="form-control" id="note-tags">
       </div>
       <button type="submit" class="btn btn-primary">ذخیره</button>
     </form>
@@ -56,6 +60,7 @@
     <div id="learn-card" class="card p-3">
       <h5 id="learn-title"></h5>
       <p id="learn-content"></p>
+      <p id="learn-tags" class="text-muted"></p>
       <button id="next-btn" class="btn btn-success mt-2">بعدی</button>
     </div>
   </section>
