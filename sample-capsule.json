@@ -1,0 +1,38 @@
+{
+  "schema": "pocket-classroom/v1",
+  "capsule": {
+    "id": "c1696600000000",
+    "title": "Sample Biology Capsule",
+    "subject": "Biology",
+    "level": "Beginner",
+    "description": "A sample capsule for learning basic biology concepts.",
+    "notes": [
+      "Cells are the basic unit of life.",
+      "DNA carries genetic information.",
+      "Photosynthesis converts sunlight into energy."
+    ],
+    "flashcards": [
+      { "front": "What is the powerhouse of the cell?", "back": "Mitochondria" },
+      { "front": "Which molecule carries genetic information?", "back": "DNA" },
+      { "front": "What process converts sunlight into chemical energy?", "back": "Photosynthesis" }
+    ],
+    "quiz": [
+      {
+        "question": "Which organelle is responsible for energy production?",
+        "choices": ["Nucleus", "Mitochondria", "Ribosome", "Golgi Apparatus"],
+        "correctIndex": 1
+      },
+      {
+        "question": "DNA stands for?",
+        "choices": ["Deoxyribonucleic Acid", "Dynamic Nucleic Acid", "Deoxynuclear Acid", "Double Nitrogen Acid"],
+        "correctIndex": 0
+      },
+      {
+        "question": "Photosynthesis occurs in which part of the plant cell?",
+        "choices": ["Mitochondria", "Nucleus", "Chloroplast", "Ribosome"],
+        "correctIndex": 2
+      }
+    ],
+    "updatedAt": "2025-10-07T07:00:00.000Z"
+  }
+}

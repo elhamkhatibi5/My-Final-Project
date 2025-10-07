@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket Classroom</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark text-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
+<div class="container-fluid">
+<a class="navbar-brand" href="#">Pocket Classroom</a>
+<div class="collapse navbar-collapse">
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+<li class="nav-item"><a class="nav-link active" href="#" data-tab="library">Library</a></li>
+<li class="nav-item"><a class="nav-link" href="#" data-tab="author">Author</a></li>
+<li class="nav-item"><a class="nav-link" href="#" data-tab="learn">Learn</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<main class="container py-4">
+<section id="library-section" class="tab-section">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h2>Library</h2>
+<div>
+<button id="new-capsule-btn" class="btn btn-success me-2">New Capsule</button>
+<input type="file" id="import-json" class="form-control d-inline-block w-auto">
+</div>
+</div>
+<div id="library-grid" class="row g-3"></div>
+</section>
+<section id="author-section" class="tab-section d-none">
+<h2>Author Capsule</h2>
+<form id="author-form" class="mb-3">
+<div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-control" id="capsule-title" required></div>
+<div class="mb-3"><label class="form-label">Subject</label><input type="text" class="form-control" id="capsule-subject"></div>
+<div class="mb-3"><label class="form-label">Level</label>
+<select class="form-select" id="capsule-level">
+<option value="Beginner">Beginner</option>
+<option value="Intermediate">Intermediate</option>
+<option value="Advanced">Advanced</option>
+</select>
+</div>
+<div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" id="capsule-description" rows="2"></textarea></div>
+<div class="mb-3"><label class="form-label">Notes (one per line)</label><textarea class="form-control" id="capsule-notes" rows="4"></textarea></div>
+<div class="mb-3">
+<label class="form-label">Flashcards</label>
+<div id="flashcards-container"></div>
+<button type="button" id="add-flashcard-btn" class="btn btn-sm btn-primary mt-2">Add Flashcard</button>
+</div>
+<div class="mb-3">
+<label class="form-label">Quiz</label>
+<div id="quiz-container"></div>
+<button type="button" id="add-quiz-btn" class="btn btn-sm btn-primary mt-2">Add Question</button>
+</div>
+<button type="submit" class="btn btn-success">Save Capsule</button>
+</form>
+</section>
+<section id="learn-section" class="tab-section d-none">
+<h2>Learn Mode</h2>
+<div class="mb-3">
+<select id="learn-capsule-select" class="form-select w-50"></select>
+</div>
+<ul class="nav nav-tabs mb-3" id="learn-tabs">
+<li class="nav-item"><a class="nav-link active" href="#" data-tab="notes-tab">Notes</a></li>
+<li class="nav-item"><a class="nav-link" href="#" data-tab="flashcards-tab">Flashcards</a></li>
+<li class="nav-item"><a class="nav-link" href="#" data-tab="quiz-tab">Quiz</a></li>
+</ul>
+<div id="learn-content">
+<div id="notes-tab" class="learn-tab"></div>
+<div id="flashcards-tab" class="learn-tab d-none"></div>
+<div id="quiz-tab" class="learn-tab d-none"></div>
+</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
