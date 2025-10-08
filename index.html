@@ -636,25 +636,47 @@ function handleFileImport(e){
 
 /* --- Study: start --- */
 function startStudyFromId(id){
-  const cap = app.capsules.find(c=>c.id===id); if(!cap) return;
+  const cap = app.capsules.find(c=>c.id===id);
+  if(!cap) { console.warn('Capsule not found', id); return; }
+
+  if(cap.type==='note'){
+    alert('This capsule is not studyable (note-only).');
+    return;
+  }
+
+  // Initialize study state
   studyState.capsuleId = id;
   studyState.index = 0;
   studyState.learned = new Set();
+  studyState.items = (cap.data||[]).map(x=>({...x}));
+  studyState.mode = cap.type==='flashcards' ? 'flashcards' : 'quiz';
 
-  if(cap.type==='flashcards'){ studyState.mode='flashcards'; studyState.items = (cap.data||[]).map(x=>({...x})); showFlashStudy(); }
-  else if(cap.type==='quiz'){ studyState.mode='quiz'; studyState.items = (cap.data||[]).map(x=>({...x})); showQuizStudy(); }
-  else { alert('This capsule is not studyable (note-only).'); return; }
+  // Show appropriate UI
+  studyEmpty.style.display = 'none';
+  if(studyState.mode==='flashcards'){
+    flashStudy.classList.remove('d-none');
+    quizStudy.classList.add('d-none');
+  } else {
+    flashStudy.classList.add('d-none');
+    quizStudy.classList.remove('d-none');
+  }
 
+  // Update header labels
   studyModeLabel.textContent = studyState.mode==='flashcards' ? 'Flashcards':'Quiz';
   studyProgress.textContent = `0 / ${studyState.items.length}`;
-}
+
+  // Render first card
+  renderStudyCard();
+
+  // Switch to Learn section
+  showSection('learn');
+  }
 
 /* UI: Start button from select */
-startStudyBtn.addEventListener('click', ()=>{
-  const id = studySelect.value;
-  if(!id) return alert('Choose a capsule to study.');
-  startStudyFromId(id);
-});
+if(btn.matches('.btn-study')){
+  const id = btn.dataset.i;
+  startStudyFromId(id);  // فقط همین، بدون تغییر select
+}
 
 /* Shuffle */
 function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
