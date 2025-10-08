@@ -795,6 +795,193 @@ renderIoLog();
   
 /* small helper to reset tmp arrays when switching */  
 document.querySelectorAll('.nav-btn').forEach(b=> b.addEventListener('click', ()=> { window._tmpFlashcards=[]; window._tmpQuiz=[]; }));  
-  
+  /* --- Import / Export library --- */
+exportAllBtn.addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(app.capsules, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pocket_classroom_library.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  addIoLog('Exported full library');
+});
+
+importAllBtn.addEventListener('click', ()=> fileImport.click());
+fileImport.addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  if(!file) return;
+  const text = await file.text();
+  try{
+    const imported = JSON.parse(text);
+    if(Array.isArray(imported)){
+      app.capsules = imported;
+      saveState();
+      renderLibrary();
+      addIoLog(`Imported ${imported.length} capsules`);
+    } else {
+      alert('Invalid JSON structure.');
+    }
+  }catch(e){
+    alert('Error reading file: ' + e.message);
+  }
+  fileImport.value = '';
+});
+
+/* --- Notes autosave --- */
+notesArea.value = app.notes;
+notesArea.addEventListener('input', ()=>{
+  app.notes = notesArea.value;
+  saveNotes();
+});
+
+/* --- IO Log --- */
+function renderIoLog(){
+  ioLogEl.innerHTML = app.ioLog.map(log=>`<li>[${new Date(log.at).toLocaleTimeString()}] ${escapeHtml(log.text)}</li>`).join('');
+}
+clearLogs.addEventListener('click', ()=>{
+  app.ioLog = [];
+  saveIoLog();
+  renderIoLog();
+});
+
+/* --- Study section --- */
+function startStudyFromId(id){
+  const cap = app.capsules.find(c=>c.id===id);
+  if(!cap){ alert('Capsule not found.'); return; }
+
+  studyState.capsuleId = cap.id;
+  studyState.index = 0;
+  studyState.learned = new Set();
+  studyModeLabel.textContent = cap.type.charAt(0).toUpperCase() + cap.type.slice(1);
+
+  if(cap.type === 'flashcards'){
+    studyState.mode = 'flashcards';
+    studyState.items = [...(cap.data || [])];
+    showFlashcardStudy();
+  } else if(cap.type === 'quiz'){
+    studyState.mode = 'quiz';
+    studyState.items = [...(cap.data || [])];
+    showQuizStudy();
+  } else {
+    studyState.mode = 'note';
+    studyArea.innerHTML = `<div class="muted">This capsule is a note — review its content below:</div><div class="mt-3">${escapeHtml(cap.content || '')}</div>`;
+    studyProgress.textContent = '—';
+  }
+}
+
+function showFlashcardStudy(){
+  studyEmpty.classList.add('d-none');
+  quizStudy.classList.add('d-none');
+  flashStudy.classList.remove('d-none');
+  renderFlashcard();
+}
+
+function renderFlashcard(){
+  const list = studyState.items;
+  if(list.length === 0){
+    fcFrontDisplay.textContent = 'No flashcards available.';
+    fcBackDisplay.textContent = '';
+    studyProgress.textContent = '0 / 0';
+    return;
+  }
+
+  const idx = studyState.index % list.length;
+  const card = list[idx];
+  fcMeta.textContent = `Card ${idx+1} of ${list.length}`;
+  fcFrontDisplay.textContent = card.front;
+  fcBackDisplay.textContent = card.back;
+  fcBackDisplay.style.display = 'none';
+  studyProgress.textContent = `${studyState.learned.size} / ${list.length}`;
+}
+
+showAnswerBtn.addEventListener('click', ()=> fcBackDisplay.style.display = 'block');
+
+markLearnedBtn.addEventListener('click', ()=>{
+  const card = studyState.items[studyState.index];
+  studyState.learned.add(card.id);
+  studyProgress.textContent = `${studyState.learned.size} / ${studyState.items.length}`;
+});
+
+nextCardBtn.addEventListener('click', ()=>{
+  studyState.index = (studyState.index + 1) % studyState.items.length;
+  renderFlashcard();
+});
+
+shuffleBtn.addEventListener('click', ()=>{
+  if(!studyState.items.length) return;
+  studyState.items.sort(()=>Math.random() - 0.5);
+  studyState.index = 0;
+  if(studyState.mode === 'flashcards') renderFlashcard();
+  if(studyState.mode === 'quiz') renderQuizQuestion();
+});
+
+/* --- Quiz study --- */
+function showQuizStudy(){
+  studyEmpty.classList.add('d-none');
+  flashStudy.classList.add('d-none');
+  quizStudy.classList.remove('d-none');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const list = studyState.items;
+  if(list.length === 0){
+    qTextDisplay.textContent = 'No questions available.';
+    qOptions.innerHTML = '';
+    return;
+  }
+
+  const idx = studyState.index % list.length;
+  const q = list[idx];
+  qTextDisplay.textContent = q.text;
+  qFeedback.textContent = '';
+  qOptions.innerHTML = '';
+
+  q.opts.forEach((opt, i)=>{
+    if(!opt) return;
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-outline-light btn-pill text-start';
+    btn.textContent = `${String.fromCharCode(65+i)}. ${opt}`;
+    btn.addEventListener('click', ()=>{
+      const correct = q.correct === i+1;
+      qFeedback.textContent = correct ? '✅ Correct!' : `❌ Wrong. Correct answer: ${String.fromCharCode(64+q.correct)}`;
+    });
+    qOptions.appendChild(btn);
+  });
+
+  studyProgress.textContent = `${studyState.index+1} / ${list.length}`;
+}
+
+qNextBtn.addEventListener('click', ()=>{
+  studyState.index = (studyState.index + 1) % studyState.items.length;
+  renderQuizQuestion();
+});
+
+startStudyBtn.addEventListener('click', ()=>{
+  const id = studySelect.value;
+  if(!id) return alert('Choose a capsule to study.');
+  startStudyFromId(id);
+});
+
+/* --- Navigation --- */
+function showSection(name){
+  Object.keys(sections).forEach(k=>{
+    sections[k].classList.toggle('d-none', k!==name);
+  });
+  navBtns.forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.section === name);
+  });
+}
+
+navBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=> showSection(btn.dataset.section));
+});
+
+/* --- Init --- */
+loadState();
+renderLibrary();
+renderIoLog();
+showSection('library');
 </script>  </body>  
 </html>
