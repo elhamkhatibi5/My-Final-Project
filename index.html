@@ -628,11 +628,43 @@ function handleFileImport(e){
 }  
   
 /* --- Study: start --- */  
-function startStudyFromId(id){  
-  const cap = app.capsules.find(c=>c.id===id); if(!cap) return;  
-  studyState.capsuleId = id;  
-  studyState.index = 0;  
-  studyState.learned = new Set();  
+libraryList.addEventListener('click', (ev)=>{
+  const btn = ev.target;
+  if(btn.matches('.btn-study')){
+    const id = btn.dataset.i;
+    const cap = app.capsules.find(c => c.id === id);
+    if(!cap) return;
+
+    if(cap.type === 'note'){
+      alert('This capsule is note-only and cannot be studied.');
+      return;
+    }
+
+    // مقداردهی studyState
+    studyState.capsuleId = id;
+    studyState.index = 0;
+    studyState.learned = new Set();
+    studyState.items = (cap.data||[]).map(x => ({...x}));
+    studyState.mode = cap.type==='flashcards' ? 'flashcards' : 'quiz';
+
+    // نمایش بخش مناسب
+    if(studyState.mode === 'flashcards'){
+      flashStudy.classList.remove('d-none');
+      quizStudy.classList.add('d-none');
+    } else {
+      flashStudy.classList.add('d-none');
+      quizStudy.classList.remove('d-none');
+    }
+
+    studyModeLabel.textContent = studyState.mode==='flashcards' ? 'Flashcards':'Quiz';
+    studyProgress.textContent = `0 / ${studyState.items.length}`;
+
+    renderStudyCard();
+
+    // برو به بخش Learn
+    showSection('learn');
+  }
+});  
   
   if(cap.type==='flashcards'){ studyState.mode='flashcards'; studyState.items = (cap.data||[]).map(x=>({...x})); showFlashStudy(); }  
   else if(cap.type==='quiz'){ studyState.mode='quiz'; studyState.items = (cap.data||[]).map(x=>({...x})); showQuizStudy(); }  
